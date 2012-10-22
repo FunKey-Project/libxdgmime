@@ -602,6 +602,10 @@ int xdg_mime_get_extensions_from_mime_type(const char *mime_type,
 {
 	xdg_mime_init ();
 
+	if (_caches)
+		return _xdg_mime_cache_get_extensions(mime_type,
+					extensions, n_extensions);
+
 	return _xdg_glob_hash_get_extensions (global_hash,
 				mime_type, extensions, n_extensions);
 }

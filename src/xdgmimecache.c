@@ -637,6 +637,86 @@ cache_glob_lookup_file_name (const char *file_name,
   return n;
 }
 
+static int __xdg_mime_cache_get_extensions(XdgMimeCache *cache,
+			char *buf,
+			int buf_offset,
+			xdg_uint32_t n_entries,
+			xdg_uint32_t offset,
+			const char *mime_type,
+			char **extensions,
+			int n_extensions)
+{
+	size_t i;
+	int n = 0;
+
+	for (i = 0; i < n_entries; i++) {
+		xdg_uint32_t mimeoffset;
+		char c, *mime;
+		size_t j;
+
+		c = GET_UINT32(cache->buffer, offset + 12 * i);
+		if (c) {
+			xdg_uint32_t nb_child = GET_UINT32(cache->buffer, offset + i * 12 + 4);
+			xdg_uint32_t child = GET_UINT32(cache->buffer, offset + i * 12 + 8);
+
+			buf[buf_offset] = c;
+			int nb = __xdg_mime_cache_get_extensions(cache, buf, buf_offset + 1,
+						nb_child, child, mime_type, extensions, n_extensions - n);
+			n += nb;
+			extensions += nb;
+
+			if (n >= n_extensions)
+				break;
+
+			continue;
+		}
+
+		mimeoffset = GET_UINT32(cache->buffer, offset + i * 12 + 4);
+		mime = (char *) cache->buffer + mimeoffset;
+
+		if (!strcmp(mime_type, mime)) {
+			int j;
+
+			*extensions = malloc(buf_offset--);
+			(*extensions)[buf_offset] = 0;
+
+			for (j = 0; j < buf_offset; j++)
+				(*extensions)[j] = buf[buf_offset - j - 1];
+
+			extensions++;
+			n++;
+		}
+	}
+
+	return n;
+}
+
+int _xdg_mime_cache_get_extensions(const char *mime_type,
+			char **extensions,
+			int n_extensions)
+{
+	char buf[256];
+	int i, n = 0;
+
+	for (i = 0; _caches[i]; i++) {
+		int nb;
+
+		xdg_uint32_t list_offset = GET_UINT32 (_caches[i]->buffer, 16);
+		xdg_uint32_t n_entries = GET_UINT32 (_caches[i]->buffer, list_offset);
+		xdg_uint32_t offset = GET_UINT32 (_caches[i]->buffer, list_offset + 4);
+
+		nb =  __xdg_mime_cache_get_extensions(_caches[i], buf, 0,
+				n_entries, offset, mime_type, extensions, n_extensions);
+		n += nb;
+		extensions += nb;
+
+		if (n >= n_extensions)
+			break;
+	}
+
+	return n;
+}
+
 int
 _xdg_mime_cache_get_max_buffer_extents (void)
 {

@@ -35,6 +35,7 @@ typedef struct _XdgMimeCache XdgMimeCache;
 #define _xdg_mime_cache_new_from_file                 XDG_RESERVED_ENTRY(cache_new_from_file)
 #define _xdg_mime_cache_ref                           XDG_RESERVED_ENTRY(cache_ref)
 #define _xdg_mime_cache_unref                         XDG_RESERVED_ENTRY(cache_unref)
+#define _xdg_mime_cache_get_extensions                XDG_RESERVED_ENTRY(cache_get_extensions)
 #define _xdg_mime_cache_get_max_buffer_extents        XDG_RESERVED_ENTRY(cache_get_max_buffer_extents)
 #define _xdg_mime_cache_get_mime_type_for_data        XDG_RESERVED_ENTRY(cache_get_mime_type_for_data)
 #define _xdg_mime_cache_get_mime_type_for_file        XDG_RESERVED_ENTRY(cache_get_mime_type_for_file)
@@ -54,6 +55,10 @@ XdgMimeCache *_xdg_mime_cache_new_from_file (const char   *file_name);
 XdgMimeCache *_xdg_mime_cache_ref           (XdgMimeCache *cache);
 void          _xdg_mime_cache_unref         (XdgMimeCache *cache);
 
+
+int _xdg_mime_cache_get_extensions(const char *mime_type,
+			char **extensions,
+			int n_extensions);
 
 const char  *_xdg_mime_cache_get_mime_type_for_data       (const void *data,
 		 				           size_t      len,
