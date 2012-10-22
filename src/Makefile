@@ -11,7 +11,10 @@ LIBXDGMIME = $(SONAME).$(VERSION_MINOR)
 CXX = $(CROSS_COMPILE)g++
 CC  = $(CROSS_COMPILE)gcc
 LD  = $(CROSS_COMPILE)ld
-CFLAGS += -fPIC
+
+# TODO: use Autotools to detect <sys/mman.h>
+# instead of hardcoding that...
+CFLAGS += -fPIC -DHAVE_MMAP
 
 INSTALL ?= install
 
