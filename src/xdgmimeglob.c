@@ -400,6 +400,57 @@ ascii_tolower (const char *str)
   return lower;
 }
 
+static int __xdg_glob_hash_get_extensions(XdgGlobHashNode *head,
+			char *buf,
+			int offset,
+			const char *mime_type,
+			char **extensions,
+			int n_extensions)
+{
+	XdgGlobHashNode *node;
+	int n = 0;
+
+	for (node = head; node && n < n_extensions; node = node->next) {
+		buf[offset] = node->character;
+
+		if (node->child) {
+			int nb = __xdg_glob_hash_get_extensions(node->child,
+						buf, offset + 1,
+						mime_type, extensions, n_extensions - n);
+			n += nb;
+			extensions += nb;
+		}
+
+		if (n >= n_extensions)
+			break;
+
+		if (node->mime_type && !strcmp(mime_type, node->mime_type)) {
+			int i;
+
+			*extensions = malloc(offset + 1);
+			(*extensions)[offset] = 0;
+
+			for (i = 0; i < offset; i++)
+				(*extensions)[i] = buf[offset - i - 1];
+
+			extensions++;
+			n++;
+		}
+	}
+
+	return n;
+}
+
+int _xdg_glob_hash_get_extensions(XdgGlobHash *glob_hash,
+			const char *mime_type,
+			char **extensions,
+			int n_extensions)
+{
+	char buf[256];
+	return __xdg_glob_hash_get_extensions(glob_hash->simple_node,
+				buf, 0, mime_type, extensions, n_extensions);
+}
+
 int
 _xdg_glob_hash_lookup_file_name (XdgGlobHash *glob_hash,
 				 const char  *file_name,

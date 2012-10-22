@@ -596,6 +596,16 @@ xdg_mime_get_mime_types_from_file_name (const char *file_name,
   return _xdg_glob_hash_lookup_file_name (global_hash, file_name, mime_types, n_mime_types);
 }
 
+int xdg_mime_get_extensions_from_mime_type(const char *mime_type,
+			char *extensions[],
+			int n_extensions)
+{
+	xdg_mime_init ();
+
+	return _xdg_glob_hash_get_extensions (global_hash,
+				mime_type, extensions, n_extensions);
+}
+
 int
 xdg_mime_is_valid_mime_type (const char *mime_type)
 {

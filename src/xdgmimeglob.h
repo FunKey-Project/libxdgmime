@@ -45,6 +45,7 @@ typedef enum
 #define _xdg_glob_hash_new                    XDG_RESERVED_ENTRY(hash_new)
 #define _xdg_glob_hash_free                   XDG_RESERVED_ENTRY(hash_free)
 #define _xdg_glob_hash_lookup_file_name       XDG_RESERVED_ENTRY(hash_lookup_file_name)
+#define _xdg_glob_hash_get_extensions         XDG_RESERVED_ENTRY(hash_lookup_get_extensions)
 #define _xdg_glob_hash_append_glob            XDG_RESERVED_ENTRY(hash_append_glob)
 #define _xdg_glob_determine_type              XDG_RESERVED_ENTRY(determine_type)
 #define _xdg_glob_hash_dump                   XDG_RESERVED_ENTRY(hash_dump)
@@ -59,6 +60,10 @@ int          _xdg_glob_hash_lookup_file_name (XdgGlobHash *glob_hash,
 					      const char  *text,
 					      const char  *mime_types[],
 					      int          n_mime_types);
+int _xdg_glob_hash_get_extensions(XdgGlobHash *glob_hash,
+			const char *mime_type,
+			char **extensions,
+			int n_extensions);
 void         _xdg_glob_hash_append_glob      (XdgGlobHash *glob_hash,
 					      const char  *glob,
 					      const char  *mime_type,
