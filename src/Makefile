@@ -34,6 +34,7 @@ install-lib: $(LIBXDGMIME)
 
 install: install-lib
 	$(INSTALL) -D -m 0644 xdgmime.h $(DESTDIR)$(PREFIX)/include/xdgmime.h
+	ln -sf $(SONAME) $(DESTDIR)$(PREFIX)/lib/$(LIBNAME)
 
 clean:
 	rm -f $(OBJS) $(LIBXDGMIME)
